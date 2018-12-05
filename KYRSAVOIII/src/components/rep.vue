@@ -30,7 +30,8 @@
                 </div>
             </div>
         </div>
-        {{rep}}
+        <!--<div v-for="(item,index) in rep " v-bind:key="index">-->
+        <!--</div>-->
         <div class="container">
             <div class="row">
                 <div class="col-xs-12 col-lg-8 block2" style="padding: 0%">
@@ -67,7 +68,7 @@
                             </div>
                         </div>
 
-                        <b-pagination align="center" class="btn btn-danger" v-for="p in pagination.pages" @click.prevent="setPage(p)" v-bind:key="p._id">
+                        <b-pagination align="center" class="btn btn-danger" v-for="p in pagination.pages" v-on:click.prevent = "setPage(p)" v-bind:key="p._id">
                             {{p}}
                         </b-pagination>
 
@@ -197,6 +198,7 @@
     import lodash from 'lodash'
     import Vuex from 'vuex';
 
+
     Vue.use(Vuex);
 
     Vue.use(VueAxios, axios,lodash)
@@ -218,9 +220,9 @@
 
         },
         mounted: function(){
-            Vue.axios.get("http://127.0.0.1:3000/").then((response) => {
+            Vue.axios.get("http://localhost:3000/tasks").then((response) => {
                 this.rep = response.data;
-
+                this.test=this.rep.length;
                 this.pep = this.rep;
             })
             // var i =this.id;
@@ -230,15 +232,16 @@
             //     })
             // this.lil=this.pep;
             //      this.pep = this.rep;
-
+            this.pep = this.rep;
 
         },
         /* mounted: function () {
              this.students = students;
          },*/
         methods:{
+
             setPage(p){
-                this.pagination=this.paginator(this.rep.length,p);
+                this.pagination=this.paginator(25,p);
             },
             paginate(rep){
                 return _.slice(rep,this.pagination.startIndex, this.pagination.endIndex +1)
@@ -256,11 +259,15 @@
             getRep(){
                 return this.rep;
             },
+
         },
         created(){
             this.setPage(1);
         },
         computed:{
+            getLen(){
+                return this.rep.length;
+            },
             collection(){
                 return this.paginate(this.rep);
             },

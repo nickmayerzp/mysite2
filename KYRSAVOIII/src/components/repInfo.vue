@@ -30,24 +30,27 @@
                 </div>
             </div>
         </div>
+        {{rep}}
+        <hr />
+        {{tt}}
         <div class="container">
             <div class="row">
                 <div class="col-xs-12 col-lg-8 block2" style="padding: 0%">
                     <div class="container-fluid" style="padding: 0%">
                         <div clas="row">
-                            <div id="titl">{{lil[0].op}}</div>
+                            <div id="titl">{{rep.op}}</div>
                         </div>
                     </div>
                     <div class="rep">
                         <div class="container-fluid" id="blockImg ">
                             <div class="row">
                                 <div class="col-md-12" style="height: 100%; background-color:#fff; padding: 0%">
-                                    <img v-bind:src="lil[0].img"style="float: left;padding-left: 10px;padding-top: 10px">
+                                    <img v-bind:src="rep.img"style="float: left;padding-left: 10px;padding-top: 10px">
                                     <div style="float: left;padding-left: 10px" class="ing">
 
                                         <h3 style="padding-left: 10px">Ингридиенты</h3>
                                         <ol class="pills">
-                                            <li v-for="(item,index) in lil[0].ing">
+                                            <li v-for="(item,index) in rep.ing" v-bind:key="index">
                                                 {{item}}
                                             </li>
                                         </ol>
@@ -56,18 +59,18 @@
                                         <br /> <hr />
                                     </div>
                                     <div>
-                                    <img src="../assets/img/icons/icons8-столовая-50.png">{{lil[0].kat}}
-                                    <img src="../assets/img/icons/icons8-скорость-50.png">{{lil[0].comp}}
-                                    <img src="../assets/img/icons/icons8-групповой-звонок-filled-50.png">{{lil[0].por}}
+                                    <img src="../assets/img/icons/icons8-столовая-50.png">{{rep.kat}}
+                                    <img src="../assets/img/icons/icons8-скорость-50.png">{{rep.comp}}
+                                    <img src="../assets/img/icons/icons8-групповой-звонок-filled-50.png">{{rep.por}}
                                     </div>
                                     <div style="clear: left;">
                                      <hr />
                                     </div>
-                                    <div style="clear: left; padding-top: 10px;padding-left: 10px;padding-right: 10px" class="info">{{lil[0].info}}</div>
+                                    <div style="clear: left; padding-top: 10px;padding-left: 10px;padding-right: 10px" class="info">{{rep.info}}</div>
                                     <br /> <hr />
                                     <h1 style="clear: left; padding-top: 10px">Приготовление</h1>
                                     <ol class="bullet">
-                                        <li v-for="(item,index) in lil[0].cocking" style="text-align: left;padding-left: 10.200px;border-top-width: 3px;width: 736.4px;padding-left: 20.200px;padding-left: 20.200px;margin-left: 12px;">
+                                        <li v-for="(item,index) in rep.cocking" v-bind:key="index" style="text-align: left;padding-left: 10.200px;border-top-width: 3px;width: 736.4px;padding-left: 20.200px;padding-left: 20.200px;margin-left: 12px;">
                                             {{item}}
                                         </li>
                                     </ol>
@@ -75,9 +78,10 @@
                                 <div class="col-md-12" style="height: 100%; background-color:#fff; padding: 0%; margin-top: 20px">
                                     <h3 style="clear: left; padding-top: 10px;text-align: left; padding-left: 20px">Оставить комментарий</h3>
                                     <br />
-                                    <textarea id="comment" name="comment" rows="10" cols="10"></textarea>
-                                    <button @click="addComent()">OK</button>
-
+                                    <textarea id="comment"  rows="10" cols="10" v-model="commentt"></textarea>
+                                    <button v-on:click="chh(rep)">OK</button>
+                                    {{rep.commentt}}
+                                    {{commentt}}
                                 </div>
                             </div>
                         </div>
@@ -225,7 +229,8 @@
                 poch:[],
                 pep:[],
                 lil:[],
-                coment:[]
+                commentt:[],
+                tt:[]
 
 
             };
@@ -234,11 +239,12 @@
         mounted: function () {
             var i =this.id;
              var u = this.pep;
-            Vue.axios.get("http://127.0.0.1:3000").then((response) => {
-                this.rep = response.data[0].data.find((element) =>{
-                    if(element._id == i){
-                                     u.push(element);
-                                 }
+             var l = this.lil;
+            Vue.axios.get("http://localhost:3000/tasks").then((response) => {
+                response.data.find((element) =>{
+                    this.rep = response.data.find((element) =>{
+                        return i == element._id;
+                    })
                 })
             })
             // var i =this.id;
@@ -248,9 +254,7 @@
             //              u.push(element);
             //          }
             //     })
-            this.lil=this.pep;
 
-            console.log(this.lil);
 
 
 
@@ -287,7 +291,47 @@
             },
             addComent(){
                 this.lil.com.push(this.coment);
-            }
+            },
+            // chh: function (item) {
+            //     Vue.axios.put("http://127.0.0.1:3000/tasks/"+ item._id, {
+            //         comment: item.comment[0]
+            //     }).then((response) => {
+            //             response.data.find((element) =>{
+            //                 if(element._id == this.id){
+            //                     this.pep.push(element);
+            //                 }
+            //             })
+            // },}
+            // add: function () {
+            //     Vue.axios.get("http://127.0.0.1:3000/tasks/"+this.lil[0]._id).then((response) => {
+            //         response.data.commentt.push(this.commentt);
+            //     })
+            // },
+            // chh: function (item) {
+            //     Vue.axios.put("http://localhost:3000/tasks/"+ item._id,
+            //         {
+            //             commentt: item.commentt,
+            //         }
+            //     ).then((response) => {
+            //
+            //     })
+            // },
+            add: function (item) {
+                Vue.axios.post("http://localhost:3000/tasks/"+item._id, {
+                    commentt:this.commentt
+                }).then((response) => {
+                    this.rep = response.data;
+                })
+
+            },
+            chh: function (item) {
+                Vue.axios.put("http://localhost:3000/tasks/"+ item._id, {
+                   "commentt":this.commentt
+                }).then((response) => {
+                    this.rep = response.data;
+                })
+
+            },
 
         },
         created(){
