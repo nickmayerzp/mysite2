@@ -42,7 +42,9 @@
                                 <img src="../assets/img/thumb.jpg" alt="" width="100%" height="100%" style="opacity: 0.5"/>
                                 <h2 class="h2">Яблочные драники</h2>
                                 <h2 class="h22">Популярный рецепт</h2>
+                                <router-link v-bind:to="/rep/+'5c045b85a7ace101ecccd5c8'">
                                 <button type="button" class="but btn " value="смотреть подробней">смотреть подробней</button>
+                                </router-link>
                             </div>
                         </div>
                     </div>
@@ -328,7 +330,7 @@
     }
     .block2{
         /* background: indianred;*/
-        border: 1px solid #444444;
+
         height: 1500px;
 
     }

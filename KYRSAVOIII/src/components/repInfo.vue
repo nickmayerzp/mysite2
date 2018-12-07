@@ -30,9 +30,6 @@
                 </div>
             </div>
         </div>
-        {{rep}}
-        <hr />
-        {{tt}}
         <div class="container">
             <div class="row">
                 <div class="col-xs-12 col-lg-8 block2" style="padding: 0%">
@@ -75,19 +72,33 @@
                                         </li>
                                     </ol>
                                 </div>
-                                <div class="col-md-12" style="height: 100%; background-color:#fff; padding: 0%; margin-top: 20px">
+                                <div class="col-md-12" style="height: 300px; background-color:#fff; padding: 0%; margin-top: 20px">
                                     <h3 style="clear: left; padding-top: 10px;text-align: left; padding-left: 20px">Оставить комментарий</h3>
                                     <br />
-                                    <textarea id="comment"  rows="10" cols="10" v-model="commentt"></textarea>
-                                    <button v-on:click="chh(rep)">OK</button>
-                                    {{rep.commentt}}
-                                    {{commentt}}
+                                    <textarea id="comment"  rows="7" cols="70" v-model="commentt"></textarea><br />
+                                    <button v-on:click="chh(rep)"type="button" class="but btn " value="ok" style="width: 100px;margin-top: 20px;margin-left: 42%">OK</button>
+
+                                </div>
+                                <div class="col-md-12" style="height: 100%; background-color:#fff; padding: 0%; margin-top: 20px">
+                                    <h3 style="clear: left; padding-top: 10px;text-align: left; padding-left: 20px">Коментарии</h3>
+                                    <br />
+                                    <ul class="list2a">
+                                        <li v-for="(item,index) in filteredItems" v-bind:key="index" style="text-align: left;padding-left: 10.200px;border-top-width: 3px;width: 736.4px;padding-left: 20.200px;padding-left: 20.200px;margin-left: 12px;">
+                                            {{item}}
+                                        </li>
+                                    </ul>
+                                </div>
+<div>
+
+</div>
+                                <div style="height: 20px;width: 100%; margin-top: 20px">
+
                                 </div>
                             </div>
                         </div>
-                        <!--<b-pagination align="center" class="btn btn-danger" v-for="p in pagination.pages" @click.prevent="setPage(p)" v-bind:key="p.id">-->
-                            <!--{{p}}-->
-                        <!--</b-pagination>-->
+                        <b-pagination align="center" class="btn btn-danger" v-for="p in pagination.pages" v-on:click.prevent = "setPage(p,rep.commentt.length)" v-bind:key="p._id" style="">
+                            {{p}}
+                        </b-pagination>
                     </div>
                 </div>
 
@@ -224,13 +235,15 @@
                 rep:[],
                 search: [],
                 float: 'left',
-                perPage: 9,
+                perPage: 5,
                 pagination:[],
                 poch:[],
                 pep:[],
                 lil:[],
                 commentt:[],
-                tt:[]
+                tt:[],
+                lang:[],
+                test:[]
 
 
             };
@@ -243,9 +256,12 @@
             Vue.axios.get("http://localhost:3000/tasks").then((response) => {
                 response.data.find((element) =>{
                     this.rep = response.data.find((element) =>{
+                        this.tt=element.commentt;
+                        // this.setPage(1,this.lang);
                         return i == element._id;
                     })
                 })
+
             })
             // var i =this.id;
             // var u = this.pep;
@@ -268,13 +284,21 @@
            //     })
            // }
 
+
         },
         /* mounted: function () {
              this.students = students;
          },*/
         methods:{
-            setPage(p){
-                this.pagination=this.paginator(this.rep.length,p);
+            leng(item){
+                this.lang = item.commentt.length;
+            },
+            number(){
+                return this.lang;
+            },
+            setPage(p,i){
+
+                this.pagination=this.paginator(i,p);
             },
             paginate(rep){
                 return _.slice(rep,this.pagination.startIndex, this.pagination.endIndex +1)
@@ -318,26 +342,30 @@
             // },
             add: function (item) {
                 Vue.axios.post("http://localhost:3000/tasks/"+item._id, {
-                    commentt:this.commentt
+                    commentt:Array.prototype.push(this.commentt)
                 }).then((response) => {
                     this.rep = response.data;
                 })
 
             },
             chh: function (item) {
-                Vue.axios.put("http://localhost:3000/tasks/"+ item._id, {
-                   "commentt":this.commentt
-                }).then((response) => {
-                    this.rep = response.data;
-                })
-
+                if(this.commentt==""){alert("Введите что-то в коментарий");}else {
+                    this.tt.push(this.commentt);
+                    Vue.axios.put("http://localhost:3000/tasks/" + item._id, {
+                        commentt: this.tt
+                    }).then((response) => {
+                        this.rep = response.data;
+                    })
+                }
             },
 
         },
         created(){
-            this.setPage(1);
+              this.setPage(1,6);
+
         },
         computed:{
+
             collection(){
                 return this.paginate(this.rep);
             },
@@ -353,15 +381,7 @@
                  *
                  * }
                  */
-
-
-
-                if (this.search.length === 0){
-                    return this.paginate(this.rep);
-                }
-                return this.paginate(this.rep).filter(element=>{
-                    return(element.op.toUpperCase().indexOf(this.search.toUpperCase()) > -1);
-                })
+                    return this.paginate(this.rep.commentt);
 
 
             }}
@@ -582,5 +602,131 @@
     }
     .info{
         font:  19px Roboto;
+    }
+    .list4a {
+        padding:0;
+        list-style: none;
+        counter-reset: li;
+    }
+    .list4a li {
+        position: relative;
+        padding:12px 20px 20px 28px;
+        margin-left: 40px;
+        transition-duration: 0.3s;
+    }
+    .list4a li:before {
+        border: 6px solid transparent;
+        line-height: 30px;
+        position: absolute;
+        top: 0;
+        left:-30px;
+        width:42px;
+        text-align:center;
+        font-size: 13px;
+        font-weight: bold;
+        color: #77AEDB;
+        counter-increment: li;
+        content: counter(li);
+        transition-duration: 0.3s;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+    .list4a li:hover:before {
+        color: #337AB7;
+    }
+    .list4a li:after {
+        position: absolute;
+        top: 0;
+        left: -30px;
+        width: 42px;
+        height: 42px;
+        border: 6px solid #3399FF;
+        border-radius: 50%;
+        content: '';
+        opacity: 0.5;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+    .list4a li:hover:after {
+        animation: 500ms ease-in-out 0s bounceIn;
+        opacity: 1;
+    }
+
+    @keyframes bounceIn {
+        0% {
+            opacity: 0;
+            transform: scale3d(.3, .3, .3);
+        }
+        20% {
+            transform: scale3d(1.3, 1.3, 1.3);
+        }
+        40% {
+            transform: scale3d(.9, .9, .9);
+        }
+        60% {
+            opacity: 1;
+            transform: scale3d(1.03, 1.03, 1.03);
+        }
+        80% {
+            transform: scale3d(.97, .97, .97);
+        }
+        to {
+            opacity: 1;
+            transform: scale3d(1, 1, 1);
+        }
+    }
+    .list2a {
+        margin-bottom: 8px;
+        padding:0;
+        list-style: none;
+        counter-reset: li;
+    }
+    .list2a li {
+        position: relative;
+        border: 2px solid #ff7b74;
+        background: #faefec;
+        padding:16px 20px 16px 28px;
+        margin:12px 0 12px 40px;
+        -webkit-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+    }
+    .list2a li:hover {
+        background: #FFF;
+    }
+    .list2a li:before {
+        line-height: 32px;
+        position: absolute;
+        top: 4px;
+        left:-40px;
+        width:40px;
+        text-align:center;
+        font-size: 16px;
+        font-weight: bold;
+        color: #FFF;
+        background: #ff7b74;
+        counter-increment: li;
+        content: counter(li);
+        -webkit-transition-duration: 0.2s;
+        transition-duration: 0.2s;
+    }
+    .list2a li:hover:before {
+        width:46px;
+    }
+    .list2a li:after {
+        position: absolute;
+        left: 0;
+        top: 4px;
+        content: "";
+        height: 0;
+        width: 0;
+        border: 16px solid transparent;
+        border-left-color: #ff7b74;
+        -webkit-transition-duration: 0.2s;
+        transition-duration: 0.2s
+    }
+    .list2a li:hover:after {
+        margin-left: 6px;
     }
 </style>
